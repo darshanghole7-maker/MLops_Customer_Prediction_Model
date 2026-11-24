@@ -50,14 +50,19 @@ def data_preprocessing(df):
 
         # step 8: Concat numerical and categorical pipeline and columns transformer
 
-        transformer = ColumnTransformer([("numerical_pipeline", numerical_pipeline, numerical_col),
-                                          ("categorical_pipeline", categorical_pipeline, categorical_col)])
+        transformer = ColumnTransformer([("numerical_pipeline", 
+                                        numerical_pipeline,
+                                         numerical_col),
+
+                                          ("categorical_pipeline",
+                                            categorical_pipeline,
+                                              categorical_col)])
 
 
     #step 9: fit the transformer on the train and test
     
-        X_train = transformer.fit_transform(X_train) # seen data
-        X_test = transformer.transform(X_test) # unseen data
+        X_train_transform = transformer.fit_transform(X_train) # seen data
+        X_test_transform = transformer.transform(X_test) # unseen data
 
     #step 10: fit_resample the data so that target columnns balance (only for the categoricsl columns)
     
@@ -70,11 +75,12 @@ def data_preprocessing(df):
         ---> under_sampling Technique
 
         '''
-        X_train,y_train = SMOTE().fit_resample(X_train,y_train)
+        sm = SMOTE(random_state = 1)
+        X_train_resample,y_train_resample = sm.fit_resample(X_train_transform,y_train)
 
         #step 11: Return the preprocessing X_train, X_test, y_train, y_test
 
-        return X_train,X_test,y_train,y_test
+        return X_train_resample,X_test_transform,y_train_resample,y_test
 
 
 
